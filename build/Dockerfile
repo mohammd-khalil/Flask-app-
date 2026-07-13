@@ -1,27 +1,12 @@
-# syntax=docker/dockerfile:1.4
-FROM --platform=$BUILDPLATFORM python:3.10-alpine AS builder
+FROM python:3.10-alpine
 
 WORKDIR /app
 
 COPY app/requirements.txt .
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip3 install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app/ .
+COPY app/*.py .
 
-ENTRYPOINT ["python3"]
-CMD ["app.py"]
+EXPOSE 8000
 
-FROM builder AS dev-envs
-
-RUN <<EOF
-apk update
-apk add git
-EOF
-
-RUN <<EOF
-addgroup -S docker
-adduser -S --shell /bin/bash --ingroup docker vscode
-EOF
-
-COPY --from=gloursdocker/docker / /
+CMD ["python3", "app.py"]
