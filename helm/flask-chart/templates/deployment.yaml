@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+  namespace: default
+  labels:
+    app: flask-app
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+
+  selector:
+    matchLabels:
+      app: flask-app
+
+  template:
+    metadata:
+      labels:
+        app: flask-app
+
+    spec:
+      containers:
+        - name: flask-app
+          image: {{ .Values.deployment.imagerepo }}:{{ .Values.deployment.imagetag }}
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: {{ .Values.deployment.containerport }}
+
+          env:
+            - name: ENVIRONMENT
+              value: {{ .Values.env.value }}
+
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu:  {{ .Values.resources.limits.cpu }}
+              memory:  {{ .Values.resources.limits.memory }}
+
+          volumeMounts:
+            - name: flask-storage
+              mountPath: /data
+
+      volumes:
+        - name: flask-storage
+          emptyDir: {}
+
+      restartPolicy: Always

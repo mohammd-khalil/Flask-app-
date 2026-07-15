@@ -7,13 +7,13 @@ metadata:
     app: flask-app
 
 spec:
-  type: NodePort
+  type: {{ .Values.service.type }}
   selector:
     app: flask-app
 
   ports:
     - name: http
       protocol: TCP
-      port: 80
-      targetPort: 8000
-      nodePort: 30080
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetport }}
+      nodePort: {{ .Values.service.nodePort }}
