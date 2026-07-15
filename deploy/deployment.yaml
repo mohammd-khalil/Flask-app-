@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+  namespace: default
+  labels:
+    app: flask-app
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: flask-app
+
+  template:
+    metadata:
+      labels:
+        app: flask-app
+
+    spec:
+      containers:
+        - name: flask-app
+          image: my-image:latest
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 
+
+          env:
+            - name: ENVIRONMENT
+              value: "production"
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+          volumeMounts:
+            - name: flask-storage
+              mountPath: /data
+
+      volumes:
+        - name: flask-storage
+          emptyDir: {}
+
+      restartPolicy: Always
